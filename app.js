@@ -14,7 +14,7 @@ app.use(function (req, res, next) {
 });
 
 // app.use(authorizeUser);
-
+app.use("/api", require("./routes/user"));
  
 
 // catch 404 and forward to error handler
@@ -23,5 +23,7 @@ app.use(function (req, res, next) {
 // });
 
  
-app.listen(4000);
+app.listen(4000,function(e){
+  console.log("Server listen")
+});
 // module.exports = app;
