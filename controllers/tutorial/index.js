@@ -1,5 +1,5 @@
 const db = require("../../models");
-const Tutorial = db.tutorials;
+const Tutorial = db.tutorials
 
 
 const getTutorials = (req, res) => {
