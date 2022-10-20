@@ -2,19 +2,36 @@ const db = require("../../models");
 const Property = db.property
 
 
-const getProperty = (req, res) => {
-  Property.findAll()
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
+const getProperty = async (req, res) => {
+  try {
+    const getProperty = await Property.findAll();
+    res.send({
+      data: { getProperty },
     });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
+const addProperty = async (req, res) => {
+  try {
 
+    const { title, description } = req.body;
+    let property = [{
+      title: title,
+      description: description
+    }];
+
+    property = await Property.bulkCreate(property)
+ 
+    res.send({
+      data: { property  },
+    });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 module.exports = { 
-  getProperty,
+  getProperty,addProperty
 };
