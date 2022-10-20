@@ -2,31 +2,57 @@ const express = require("express");
 const app = express();
 
 const createError = require("http-errors");
+const { resolve } = require('path');
+
 const db = require("./models");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// const corsOptions = {
-//   origin: "*",
-// };
-
-// app.use(cors(corsOptions));
+require('dotenv').config({ path: './.env' });
 
 app.use(function (req, res, next) {
   next();
 });
-db.sequelize.sync();
+app.use(express.static(process.env.STATIC_DIR));
+app.use(
+  express.json({
+    // We need the raw body to verify webhook signatures.
+    // Let's compute it only when hitting the Stripe webhook endpoint.
+    verify: function (req, res, buf) {
+      if (req.originalUrl.startsWith('/webhook')) {
+        req.rawBody = buf.toString();
+      }
+    }
+  })
+);
+app.get('/', (req, res) => {
+  const path = resolve(process.env.STATIC_DIR + '/index.html');
+  res.sendFile(path);
+});
+app.get('/config', (req, res) => {
+  res.send({
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  });
+});
+
+db.sequelize.sync().
+  then(function () {
+    app.use("/api/vi", require("./routes/property"));
+    console.log('DB connection sucessful.');
+  }).catch(err => console.log("DB Notconnection ."));
+
+
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
 // });
-app.use("/api/vi", require("./routes/property"));
- 
+
+
+
 //catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-app.listen(4000,function(e){
-  console.log("Server listen")
+app.listen(process.env.PORT, function (e) {
+  console.log(`Node server listening at ${process.env.PORT}`)
 });
 // module.exports = app;
