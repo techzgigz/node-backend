@@ -33,25 +33,33 @@ app.get('/config', (req, res) => {
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
   });
 });
-
+app.use("/", require("./routes/stripe"));
 db.sequelize.sync().
   then(function () {
+    
     app.use("/api/vi", require("./routes/property"));
     console.log('DB connection sucessful.');
   }).catch(err => console.log("DB Notconnection ."));
-
 
 // db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
 // });
 
 
-
 //catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
+const errorLogger = (error, req, res, next) => {
+   next(error); // forward to next middleware
+};
+const failSafeHandler = (err, _, res, __) =>
+  res
+    .status(err.status || 500)
+    .json({ status: err.status, message: err.message });
 
+app.use(errorLogger);
+app.use(failSafeHandler);
 app.listen(process.env.PORT, function (e) {
   console.log(`Node server listening at ${process.env.PORT}`)
 });

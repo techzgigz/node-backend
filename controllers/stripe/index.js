@@ -69,9 +69,9 @@ const addPayment= async (req, res) => {
       res.json({ clientSecret: paymentIntent.client_secret });
    
   } catch (err) {
-    res.status(400).json({ error: { message: e.message } });
+    res.status(400).json({ error: { message: err.message } });
   }
 };
 module.exports = { 
-  getProperty,addProperty
+  addPayment,webhook
 };
