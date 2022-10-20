@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 
 const createError = require("http-errors");
+const db = require("./models");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -14,8 +15,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(function (req, res, next) {
   next();
 });
-
-// app.use(authorizeUser);
+db.sequelize.sync();
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and re-sync db.");
+// });
 app.use("/api/vi", require("./routes/property"));
  
 //catch 404 and forward to error handler
