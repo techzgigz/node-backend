@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+
+const createError = require("http-errors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -14,15 +16,13 @@ app.use(function (req, res, next) {
 });
 
 // app.use(authorizeUser);
-app.use("/api", require("./routes/user"));
+app.use("/api/vi", require("./routes/property"));
  
+//catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
 
-// catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   next(createError(404));
-// });
-
- 
 app.listen(4000,function(e){
   console.log("Server listen")
 });

@@ -1,9 +1,9 @@
 const db = require("../../models");
-const Tutorial = db.tutorials
+const Property = db.property
 
 
-const getTutorials = (req, res) => {
-  Tutorial.findAll()
+const getProperty = (req, res) => {
+  Property.findAll()
     .then((data) => {
       res.send(data);
     })
@@ -16,5 +16,5 @@ const getTutorials = (req, res) => {
 };
 
 module.exports = { 
-  getTutorials,
+  getProperty,
 };
