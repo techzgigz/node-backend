@@ -16,13 +16,25 @@ const getProperty = async (req, res) => {
 const addProperty = async (req, res) => {
   try {
 
-    const { title, description } = req.body;
+    const { title, description ,country,state,location ,pincode
+    ,category,size,sizeType,prppertyType,price,bedroom,bathroom,parking,contactName,contactNumber,contactemail
+    ,subscibe} = req.body;
+      
+    
     let property = [{
-      title: title,
-      description: description
+      title, description ,country,state,location ,pincode
+    ,category,size,sizeType,prppertyType,price,bedroom,bathroom,parking,contactName,contactNumber,contactemail
+    ,subscibe
     }];
-
-    property = await Property.bulkCreate(property)
+    if(req?.files){
+      for (let index = 0; index < req?.files.length; index++) {
+        if(req.files[index]){
+          property["image"+(index+1)]  = process.env.BASE + req.files[index].filename;
+       }
+      }
+    }
+    property.status = true;
+    property = await Property.create(property)
  
     res.send({
       data: { property  },
